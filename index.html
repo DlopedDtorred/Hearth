@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#11120f" />
+    <meta name="description" content="Discover and share links to open AI models. Files stay on their original hosts." />
+    <link rel="icon" href="icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Hearth — Open model directory</title>
+  </head>
+  <body>
+    <div class="config-warning hidden" id="config-warning">Database setup needed: add your Supabase project URL and public anon key in <code>config.js</code>. Follow the setup steps in <a href="README.md">README</a>.</div>
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="Hearth home"><span class="brand-symbol">✳</span> hearth<span class="brand-dot">.</span></a>
+      <nav><a class="nav-link active" href="#catalog">Explore</a><a class="nav-link" href="#about">How it works</a></nav>
+      <div class="account-actions"><button class="button quiet hidden" id="sign-out">Sign out</button><button class="button outline" id="sign-in-open">Sign in</button><button class="button primary" id="submit-open">＋ Submit a model</button></div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy"><div class="eyebrow"><span></span> THE COMMUNITY MODEL DIRECTORY</div>
+          <h1>Good models.<br /><em>Shared by people.</em></h1>
+          <p>Find your next open model. Share a link, not a giant upload. Your files stay on Hugging Face and their original hosts.</p>
+          <div class="hero-actions"><a class="button primary large" href="#catalog">Explore the directory <span>→</span></a><button class="button outline large" id="hero-submit">Share a model <span>↗</span></button></div>
+          <div class="hero-note"><span>◈</span> Links only. No model files are hosted here.</div>
+        </div>
+        <div class="hero-art" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="art-core"><span>✳</span></div><div class="art-chip chip-a">GGUF <b>Q4_K_M</b></div><div class="art-chip chip-b">OPEN SOURCE</div><div class="art-chip chip-c">COMMUNITY ✦</div><span class="art-star star-a">✳</span><span class="art-star star-b">✦</span></div>
+      </section>
+
+      <section class="catalog" id="catalog">
+        <div class="section-heading"><div><div class="eyebrow">CURATED BY THE COMMUNITY</div><h2>Explore models<span>.</span></h2></div><div class="result-count" id="result-count">Loading directory…</div></div>
+        <div class="filters"><label class="search"><span>⌕</span><input id="search" type="search" placeholder="Search models, tags, or licenses…" /></label><select id="category-filter" aria-label="Filter by category"><option value="">All categories</option><option>Chat</option><option>Code</option><option>Vision</option><option>Embeddings</option><option>Audio</option><option>Other</option></select><select id="sort-filter" aria-label="Sort models"><option value="newest">Recently added</option><option value="oldest">Oldest first</option><option value="name">Name A–Z</option></select></div>
+        <div id="catalog-grid" class="catalog-grid" aria-live="polite"></div>
+        <div id="empty-state" class="empty-state hidden"><div class="empty-icon">✳</div><h3>No models found</h3><p>Try another search, or be the first to share a model.</p><button class="button outline" id="empty-submit">Submit a model</button></div>
+        <div class="load-error hidden" id="load-error" role="alert"></div>
+      </section>
+
+      <section class="about" id="about">
+        <div class="about-mark">◈</div><div><div class="eyebrow">A DIRECTORY, NOT A HOST</div><h2>Keep the model. Share the link.</h2><p>Hearth stores model details and download links only. Model files remain on the original provider. Check each model’s license, source, and publisher before downloading.</p></div><a href="https://github.com/DlopedDtorred/Lumbre" target="_blank" rel="noopener noreferrer" class="about-link">Built for local AI <span>↗</span></a>
+      </section>
+    </main>
+
+    <footer><a class="brand footer-brand" href="./"><span class="brand-symbol">✳</span> hearth<span class="brand-dot">.</span></a><span>A community directory for open models. No uploads. No model hosting.</span><span class="footer-privacy">◈ Your credentials stay with Supabase Auth.</span></footer>
+
+    <div class="modal-backdrop hidden" id="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+      <section class="modal auth-modal"><button class="modal-close" data-close="auth-modal" aria-label="Close">×</button><div class="modal-flower">✳</div><div class="eyebrow">YOUR COMMUNITY ACCOUNT</div><h2 id="auth-title">Welcome back<span>.</span></h2><p id="auth-description">Sign in to share model links with the community.</p>
+        <form id="auth-form"><label for="auth-email">EMAIL ADDRESS</label><input id="auth-email" type="email" autocomplete="email" required maxlength="254" placeholder="you@example.com" /><label for="auth-password">PASSWORD</label><input id="auth-password" type="password" autocomplete="current-password" required minlength="8" maxlength="128" placeholder="At least 8 characters" /><div class="form-error hidden" id="auth-error" role="alert"></div><button class="button primary form-submit" id="auth-submit" type="submit">Sign in <span>→</span></button></form>
+        <p class="auth-switch" id="auth-switch">New to Hearth? <button type="button" id="auth-toggle">Create an account</button></p><div class="modal-foot">Passwords are managed securely by Supabase Auth.</div>
+      </section>
+    </div>
+
+    <div class="modal-backdrop hidden" id="submit-modal" role="dialog" aria-modal="true" aria-labelledby="submit-title">
+      <section class="modal submit-modal"><button class="modal-close" data-close="submit-modal" aria-label="Close">×</button><div class="eyebrow">A LINK, NOT AN UPLOAD</div><h2 id="submit-title">Share a model<span>.</span></h2><p>Submit a public HTTPS link to the model’s original page or a direct GGUF download. Hearth never receives model files.</p>
+        <form id="submit-form"><label for="model-name">MODEL NAME</label><input id="model-name" type="text" required maxlength="100" placeholder="e.g. Example 7B Instruct" /><div class="field-row"><div><label for="model-category">CATEGORY</label><select id="model-category" required><option value="" disabled selected>Choose one</option><option>Chat</option><option>Code</option><option>Vision</option><option>Embeddings</option><option>Audio</option><option>Other</option></select></div><div><label for="model-quant">QUANTIZATION <span>OPTIONAL</span></label><input id="model-quant" type="text" maxlength="40" placeholder="e.g. Q4_K_M" /></div></div>
+          <label for="model-url">MODEL OR DOWNLOAD URL</label><input id="model-url" type="url" required maxlength="2048" inputmode="url" placeholder="https://huggingface.co/..." />
+          <label for="model-license">LICENSE</label><input id="model-license" type="text" required maxlength="80" placeholder="e.g. Apache-2.0, MIT, or custom" />
+          <label for="model-description">SHORT DESCRIPTION</label><textarea id="model-description" required maxlength="500" rows="3" placeholder="What is it good at? Mention hardware requirements or caveats."></textarea>
+          <label class="checkbox-row"><input type="checkbox" required /> <span>I checked that this link is public and that its license and model details are represented honestly.</span></label>
+          <div class="form-error hidden" id="submit-error" role="alert"></div><button class="button primary form-submit" id="submit-button" type="submit">Share model link <span>→</span></button>
+        </form><div class="modal-foot">HTTPS links only · No files, tokens, or private links</div>
+      </section>
+    </div>
+    <div id="toast" class="toast hidden" role="status"></div>
+    <script src="config.js"></script>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
